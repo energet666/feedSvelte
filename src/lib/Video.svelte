@@ -39,6 +39,7 @@
 >
 	<!-- svelte-ignore a11y_media_has_caption -->
 	<video
+		autoplay
 		bind:playbackRate
 		bind:currentTime
 		bind:paused
@@ -49,8 +50,10 @@
 			const el = e.target as HTMLVideoElement;
 			el.focus();
 		}}
+		onload={() => {
+			paused = true;
+		}}
 		playsinline
-		preload="auto"
 		{src}
 		class="min-h-0"
 	></video>
