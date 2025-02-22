@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+	/* @apply h-screen w-full flex flex-col justify-center items-stretch */
+	/* @apply bg-gradient-to-br from-red-500 to-blue-500 text-white/80 bg-fixed; */
+}
+html::-webkit-scrollbar {
+	display: none;
+	/* scrollbar-width: none; */
+}
+
+html {
+	touch-action: manipulation;
+	scrollbar-width: none;
+}
