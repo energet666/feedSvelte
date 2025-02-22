@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Switch } from "@skeletonlabs/skeleton-svelte";
 	import Post from "./lib/Post.svelte";
-	import {MoonIcon, SunIcon} from "lucide-svelte"
+	import { MoonIcon, SunIcon } from "lucide-svelte";
 	import * as themes from "@skeletonlabs/skeleton/themes";
 	import MyCanvas from "./lib/MyCanvas.svelte";
 
@@ -19,7 +19,7 @@
 </script>
 
 <!-- <div class="container mx-auto"> -->
-<div class="fixed top-0 right-0 w-full bg-surface-300-700 flex gap-2 p-2 z-10">
+<div class="w-full bg-surface-300-700 flex gap-2 p-2 z-10">
 	<Switch
 		name="mode"
 		controlActive="bg-surface-200"
@@ -38,7 +38,7 @@
 			id="idtheme"
 			class="select"
 			onchange={(el) => {
-				const themeName = (el.target as HTMLSelectElement).value;
+				const themeName = el.currentTarget.value;
 				document.body.setAttribute("data-theme", themeName);
 			}}
 		>
@@ -48,11 +48,8 @@
 		</select>
 	</label>
 </div>
-<div
-	class="mx-auto max-w-md h-screen p-1 flex flex-col gap-2 customScroll mt-10"
->
+<div class="mx-auto max-w-md flex flex-col gap-2 customScroll">
 	<MyCanvas />
-	<!-- <MyCanvas /> -->
 	<Post
 		id={1}
 		src="/video.mp4"

@@ -11,7 +11,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="overflow-hidden group {fullScreen
+	class="overflow-hidden group flex flex-col justify-center {fullScreen
 		? 'fixed top-0 left-0 h-full w-full z-10 bg-black/80'
 		: 'relative'}"
 	onkeydown={(e) => {
@@ -45,7 +45,7 @@
 		playsinline
 		preload="auto"
 		{src}
-		class="h-full w-fit object-contain mx-auto outline-none"
+		class="min-h-0"
 	></video>
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div

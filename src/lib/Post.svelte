@@ -14,14 +14,14 @@
 </script>
 
 <div
-	class="flex flex-col max-h-[calc(100%-10px)] shrink-0 bg-primary-600/10 rounded-xl overflow-hidden shadow-lg"
+	class="flex flex-col max-h-[calc(100vh-10px)] bg-primary-600/10 rounded-xl overflow-hidden shadow-lg ring-1"
 >
 	{#if isVideo}
 		<Video {src} />
 	{:else if isImage}
 		<img
 			alt=""
-			class="p-1 h-full w-full active:fixed active:left-0 active:top-0 active:z-10 active:bg-black"
+			class="p-1 active:fixed active:left-0 active:top-0 active:z-10 active:bg-black active:w-screen active:h-screen"
 			{src}
 		/>
 	{:else}
