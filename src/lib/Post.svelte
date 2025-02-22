@@ -20,6 +20,7 @@
 		<Video {src} />
 	{:else if isImage}
 		<img
+			draggable="false"
 			alt=""
 			class="p-1 active:fixed active:left-0 active:top-0 active:z-10 active:bg-black active:w-screen active:h-screen"
 			{src}

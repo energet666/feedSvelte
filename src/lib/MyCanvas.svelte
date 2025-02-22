@@ -34,6 +34,14 @@
 		}
 	});
 
+	$effect(() => {
+		if (fullscreen) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+	});
+
 	let translate = { x: 0, y: 0 };
 	const dragParent: Action<HTMLDivElement> = (node) => {
 		let start = { x: 0, y: 0 };

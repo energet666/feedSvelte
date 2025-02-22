@@ -7,6 +7,13 @@
 	let currentTime = $state(0);
 	let paused = $state(true);
 	let duration = $state(1);
+	$effect(() => {
+		if (fullScreen) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+	});
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
