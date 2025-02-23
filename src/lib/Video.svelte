@@ -39,23 +39,19 @@
 >
 	<!-- svelte-ignore a11y_media_has_caption -->
 	<video
-		autoplay
 		bind:playbackRate
 		bind:currentTime
 		bind:paused
 		bind:duration
+		{src}
 		tabindex="0"
+		playsinline
+		class="min-h-0"
 		onclick={(e) => {
 			paused = !paused;
 			const el = e.target as HTMLVideoElement;
 			el.focus();
 		}}
-		onload={() => {
-			paused = true;
-		}}
-		playsinline
-		{src}
-		class="min-h-0"
 	></video>
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div

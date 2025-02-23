@@ -48,7 +48,7 @@
 		</select>
 	</label>
 </div>
-<div class="mx-auto max-w-md flex flex-col gap-2 customScroll">
+<div class="mx-auto max-w-md flex flex-col gap-2 p-1 customScroll">
 	<MyCanvas />
 	<Post
 		id={1}
