@@ -203,7 +203,8 @@
 		</button>
 		<Segment
 			bind:value={tool}
-			indicatorBg="bg-primary-700-300"
+			indicatorBg="bg-primary-500"
+			indicatorText="text-white"
 			orientation="vertical"
 		>
 			<Segment.Item
