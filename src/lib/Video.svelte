@@ -18,7 +18,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="overflow-hidden group flex flex-col justify-center items-center p-1 {fullScreen
+	class="overflow-hidden group flex flex-col justify-center items-center {fullScreen
 		? 'fixed top-0 left-0 h-full w-full z-10 bg-black/80'
 		: 'relative'}"
 	onkeydown={(e) => {
@@ -46,7 +46,8 @@
 		{src}
 		tabindex="0"
 		playsinline
-		class="min-h-0 rounded-lg"
+		class="min-h-0"
+		style="border-radius: calc(var(--radii-container) - 0.25rem);"
 		onclick={(e) => {
 			paused = !paused;
 			const el = e.target as HTMLVideoElement;

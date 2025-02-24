@@ -37,7 +37,7 @@
 </script>
 
 <div
-	class="flex flex-col max-h-[calc(100vh-10px)] bg-primary-600/10 rounded-container overflow-hidden shadow-lg ring-1"
+	class="flex flex-col max-h-[calc(100vh-10px)] bg-primary-600/10 rounded-container overflow-hidden shadow-lg ring-1 p-1"
 >
 	{#if isVideo}
 		<Video {src} />
@@ -52,7 +52,7 @@
 		<p class="text-center p-2">Unsupported file type {src}</p>
 	{/if}
 
-	<div class="flex flex-col px-2 pb-2">
+	<div class="flex flex-col px-1 pb-1">
 		<div
 			id="msgsDiv"
 			bind:this={msgsDiv}
@@ -62,7 +62,7 @@
 			{#each msgs as msg, i}
 				<p
 					use:scrollItParentDown
-					class="p-1 preset-filled-primary-100-900 rounded-lg shadow-lg"
+					class="p-2 preset-filled-primary-100-900 rounded-container shadow-lg"
 				>
 					{msg}{i}
 				</p>

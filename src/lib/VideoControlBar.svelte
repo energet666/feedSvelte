@@ -21,7 +21,7 @@
 
 <div class="flex flex-col gap-2 w-full">
 	<p
-		class="p-2 select-none bg-primary-500/30 text-primary-contrast-500 rounded-md backdrop-blur-sm flex gap-2"
+		class="p-2 select-none bg-primary-500/30 text-primary-contrast-500 rounded-container backdrop-blur-sm flex gap-2"
 	>
 		<FileVideo />{name}
 	</p>
