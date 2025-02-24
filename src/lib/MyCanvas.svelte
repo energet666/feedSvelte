@@ -46,6 +46,7 @@
 	const dragParent: Action<HTMLDivElement> = (node) => {
 		let start = { x: 0, y: 0 };
 		node.onpointerdown = (event: MouseEvent) => {
+			event.preventDefault();
 			start = {
 				x: event.clientX - translate.x,
 				y: event.clientY - translate.y,
@@ -69,23 +70,25 @@
 			const unup = on(document, "pointerup", onpointerup);
 		};
 		const checkBounds = () => {
-			const allowBox = canvas!.getBoundingClientRect();
+			const allowBoxY = canvas!.getBoundingClientRect();
+			const allowBoxX = document.body.getBoundingClientRect();
 			const box = (
 				node.parentElement as HTMLDivElement
 			).getBoundingClientRect();
-			if (box.x < 0) {
+			if (box.x < allowBoxX.x) {
 				console.log("left");
-				translate.x += 0 - box.x + 4;
-			} else if (box.x + box.width > window.innerWidth) {
+				translate.x += allowBoxX.x - box.x + 4;
+			} else if (box.x + box.width > allowBoxX.x + allowBoxX.width) {
 				console.log("right");
-				translate.x -= box.x + box.width - window.innerWidth + 4;
+				translate.x -= box.x + box.width - (allowBoxX.x + allowBoxX.width) + 4;
 			}
-			if (box.y < allowBox.y) {
+			if (box.y < allowBoxY.y) {
 				console.log("top");
-				translate.y += allowBox.y - box.y + 4;
-			} else if (box.y + box.height > allowBox.y + allowBox.height) {
+				translate.y += allowBoxY.y - box.y + 4;
+			} else if (box.y + box.height > allowBoxY.y + allowBoxY.height) {
 				console.log("bottom");
-				translate.y -= box.y + box.height - (allowBox.y + allowBox.height) + 4;
+				translate.y -=
+					box.y + box.height - (allowBoxY.y + allowBoxY.height) + 4;
 			}
 			(node.parentElement as HTMLDivElement).style.transform =
 				`translate(${translate.x}px, ${translate.y}px)`;
