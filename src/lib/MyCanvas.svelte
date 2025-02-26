@@ -12,11 +12,19 @@
 	import { on } from "svelte/events";
 	let tool = $state("free");
 	let colorPicker = $state("#ff0000");
+
+	const sizePickerMin = 1;
+	const sizePickerMax = 500;
+
 	let sizePicker = $state(3);
+	$effect(() => {
+		if (sizePicker < sizePickerMin) sizePicker = sizePickerMin;
+		else if (sizePicker > sizePickerMax) sizePicker = sizePickerMax;
+	});
 	let fullscreen = $state(false);
 	let toolBar = $state<HTMLDivElement>();
 	let canvas = $state<HTMLCanvasElement>();
-	const canvasSize = { w: 800, h: 800 };
+	const canvasSize = { w: 1200, h: 1200 };
 	let lineTool: paper.Tool | undefined;
 	let freeTool: paper.Tool | undefined;
 
@@ -99,7 +107,14 @@
 		});
 		on(window, "resize", checkBounds);
 	};
-
+	const changeToolSizeOnWheel: Action = (node) => {
+		node.onwheel = (ev) => {
+			if (!fullscreen) return;
+			ev.preventDefault();
+			let k = sizePicker >= 50 ? 10 : 1;
+			sizePicker += (-k * ev.deltaY) / 100;
+		};
+	};
 	const paperIt: Action<HTMLCanvasElement> = (node) => {
 		console.log("paperIt", node);
 		const sc = new paper.PaperScope();
@@ -175,12 +190,13 @@
 
 <div
 	class="flex flex-col items-center justify-center gap-2 object-contain {fullscreen
-		? 'fixed top-0 left-0 w-screen h-screen z-10 bg-white dark:bg-black'
+		? 'fixed top-0 left-0 w-screen h-screen z-10 bg-black/80'
 		: 'relative'}"
 >
 	<canvas
 		bind:this={canvas}
 		use:paperIt
+		use:changeToolSizeOnWheel
 		width={canvasSize.w}
 		height={canvasSize.h}
 		class="bg-primary-100-900 rounded-lg ring-1 {fullscreen ? '' : 'w-full'}"
@@ -223,6 +239,7 @@
 		/>
 		<input
 			bind:value={sizePicker}
+			use:changeToolSizeOnWheel
 			min="1"
 			type="number"
 			class="input w-12 pl-1 select-none"

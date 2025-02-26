@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Action } from "svelte/action";
 	import Video from "./Video.svelte";
+	import { flip } from "svelte/animate";
+	import { fade, slide, blur, fly, scale } from "svelte/transition";
 	// import { Confetti } from "svelte-confetti";
 	let { id, src }: { id: number; src: string } = $props();
 	const getExt = (str: string) => {
@@ -12,14 +14,12 @@
 	const imgExt = ["jpg", "jpeg", "png", "gif", "bmp", "svg"];
 	const isVideo = videoExt.includes(ext);
 	const isImage = imgExt.includes(ext);
-	const scrollItDown: Action<HTMLDivElement> = (node) => {
-		node.scrollTop = node.scrollHeight;
-	};
-	const scrollItParentDown: Action<HTMLParagraphElement> = (node) => {
+	const scrollParentDown: Action<HTMLParagraphElement> = (node) => {
 		node.parentElement!.scrollTo({
 			top: node.parentElement!.scrollHeight,
 			behavior: "smooth",
 		});
+		// node.scrollIntoView();
 	};
 	let msgsDiv = $state<HTMLDivElement>();
 	let msgs = $state([
@@ -31,9 +31,12 @@
 		"Maybe meet later",
 		"Long speech ended here :) More messages to come :) When I have time Hi",
 	]);
-	// setInterval(() => {
-	// 	msgs.push("Hi!");
-	// }, 1000);
+	// let interval = setInterval(() => {
+	// 	msgs.push(
+	// 		"Hi! drgdrgdgdrgrdgd dgsthhryh shshwhrtrg dgrggdgrgd grshthhs sthdghr"
+	// 	);
+	// 	if (msgs.length >= 1000) clearInterval(interval);
+	// }, 10);
 </script>
 
 <div
@@ -45,7 +48,7 @@
 		<img
 			draggable="false"
 			alt=""
-			class="p-1 active:fixed active:left-0 active:top-0 active:z-10 active:bg-black active:w-screen active:h-screen"
+			class="p-1 active:fixed active:left-0 active:top-0 active:z-10 active:bg-black/80 active:w-screen active:h-screen"
 			{src}
 		/>
 	{:else}
@@ -56,13 +59,13 @@
 		<div
 			id="msgsDiv"
 			bind:this={msgsDiv}
-			use:scrollItDown
-			class="overflow-y-auto customScroll max-h-28 flex flex-col gap-2 items-start py-2"
+			class="overflow-y-auto customScroll max-h-28 flex flex-col gap-2 items-start py-2 px-1"
 		>
-			{#each msgs as msg, i}
+			{#each msgs as msg, i (i)}
 				<p
-					use:scrollItParentDown
-					class="p-2 preset-filled-primary-100-900 rounded-container shadow-lg"
+					use:scrollParentDown
+					transition:scale
+					class="p-2 preset-filled-primary-100-900 rounded-container shadow-lg whitespace-pre-wrap"
 				>
 					{msg}{i}
 				</p>
