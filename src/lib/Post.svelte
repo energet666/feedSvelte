@@ -31,12 +31,12 @@
 		"Maybe meet later",
 		"Long speech ended here :) More messages to come :) When I have time Hi",
 	]);
-	// let interval = setInterval(() => {
-	// 	msgs.push(
-	// 		"Hi! drgdrgdgdrgrdgd dgsthhryh shshwhrtrg dgrggdgrgd grshthhs sthdghr"
-	// 	);
-	// 	if (msgs.length >= 1000) clearInterval(interval);
-	// }, 10);
+	let interval = setInterval(() => {
+		msgs.push(
+			"Hi! drgdrgdgdrgrdgd dgsthhryh shshwhrtrg dgrggdgrgd grshthhs sthdghr"
+		);
+		if (msgs.length >= 1000) clearInterval(interval);
+	}, 1000);
 </script>
 
 <div

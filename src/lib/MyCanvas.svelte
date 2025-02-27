@@ -10,40 +10,24 @@
 	import { Segment } from "@skeletonlabs/skeleton-svelte";
 	import type { Action } from "svelte/action";
 	import { on } from "svelte/events";
+
 	let tool = $state("free");
-	let colorPicker = $state("#ff0000");
-
-	const sizePickerMin = 1;
-	const sizePickerMax = 500;
-
-	let sizePicker = $state(3);
+	let toolColor = $state("#ff0000");
+	let toolSize = $state(3);
+	const toolSizeMin = 1;
+	const toolSizeMax = 500;
 	$effect(() => {
-		if (sizePicker < sizePickerMin) sizePicker = sizePickerMin;
-		else if (sizePicker > sizePickerMax) sizePicker = sizePickerMax;
-	});
-	let fullscreen = $state(false);
-	let toolBar = $state<HTMLDivElement>();
-	let canvas = $state<HTMLCanvasElement>();
-	const canvasSize = { w: 1200, h: 1200 };
-	let lineTool: paper.Tool | undefined;
-	let freeTool: paper.Tool | undefined;
-
-	$effect(() => {
-		console.log("tool: ", tool);
-		switch (tool) {
-			case "free":
-				if (!freeTool) return;
-				freeTool.activate();
-				break;
-			case "line":
-				if (!lineTool) return;
-				lineTool.activate();
-				break;
-		}
+		if (toolSize < toolSizeMin) toolSize = toolSizeMin;
+		else if (toolSize > toolSizeMax) toolSize = toolSizeMax;
 	});
 
+	let toolBarEl = $state<HTMLDivElement>();
+	let canvasEl = $state<HTMLCanvasElement>();
+	const canvasSize = { w: 1000, h: 1000 };
+
+	let fullscreened = $state(false);
 	$effect(() => {
-		if (fullscreen) {
+		if (fullscreened) {
 			document.body.classList.add("overflow-hidden");
 		} else {
 			document.body.classList.remove("overflow-hidden");
@@ -53,24 +37,20 @@
 	let translate = { x: 0, y: 0 };
 	const dragParent: Action<HTMLDivElement> = (node) => {
 		let start = { x: 0, y: 0 };
+		const parent = node.parentElement as HTMLDivElement;
 		node.onpointerdown = (event: MouseEvent) => {
 			event.preventDefault();
 			start = {
 				x: event.clientX - translate.x,
 				y: event.clientY - translate.y,
 			};
-			// document.addEventListener("pointermove", onpointermove);
-			// document.addEventListener("pointerup", onpointerup);
 			const onpointermove = (event: MouseEvent) => {
 				translate.x = event.clientX - start.x;
 				translate.y = event.clientY - start.y;
-				(node.parentElement as HTMLDivElement).style.transform =
-					`translate(${translate.x}px, ${translate.y}px)`;
+				parent.style.transform = `translate(${translate.x}px, ${translate.y}px)`;
 			};
 			const onpointerup = () => {
 				checkBounds();
-				// document.removeEventListener("pointermove", onpointermove);
-				// document.removeEventListener("pointerup", onpointerup);
 				unmove();
 				unup();
 			};
@@ -78,43 +58,37 @@
 			const unup = on(document, "pointerup", onpointerup);
 		};
 		const checkBounds = () => {
-			const allowBoxY = canvas!.getBoundingClientRect();
+			const allowBoxY = canvasEl!.getBoundingClientRect();
 			const allowBoxX = document.body.getBoundingClientRect();
-			const box = (
-				node.parentElement as HTMLDivElement
-			).getBoundingClientRect();
-			if (box.x < allowBoxX.x) {
-				console.log("left");
-				translate.x += allowBoxX.x - box.x + 4;
-			} else if (box.x + box.width > allowBoxX.x + allowBoxX.width) {
-				console.log("right");
-				translate.x -= box.x + box.width - (allowBoxX.x + allowBoxX.width) + 4;
+			const box = parent.getBoundingClientRect();
+			if (box.left < allowBoxX.left) {
+				translate.x += allowBoxX.left - box.left + 4;
+			} else if (box.right > allowBoxX.right) {
+				translate.x -= box.right - allowBoxX.right + 4;
 			}
-			if (box.y < allowBoxY.y) {
-				console.log("top");
-				translate.y += allowBoxY.y - box.y + 4;
-			} else if (box.y + box.height > allowBoxY.y + allowBoxY.height) {
-				console.log("bottom");
-				translate.y -=
-					box.y + box.height - (allowBoxY.y + allowBoxY.height) + 4;
+			if (box.top < allowBoxY.top) {
+				translate.y += allowBoxY.top - box.top + 4;
+			} else if (box.bottom > allowBoxY.bottom) {
+				translate.y -= box.bottom - allowBoxY.bottom + 4;
 			}
-			(node.parentElement as HTMLDivElement).style.transform =
-				`translate(${translate.x}px, ${translate.y}px)`;
+			parent.style.transform = `translate(${translate.x}px, ${translate.y}px)`;
 		};
 		$effect(() => {
-			let _ = fullscreen;
+			let _ = fullscreened;
 			checkBounds();
 		});
 		on(window, "resize", checkBounds);
 	};
+
 	const changeToolSizeOnWheel: Action = (node) => {
 		node.onwheel = (ev) => {
-			if (!fullscreen) return;
+			if (!fullscreened) return;
 			ev.preventDefault();
-			let k = sizePicker >= 50 ? 10 : 1;
-			sizePicker += (-k * ev.deltaY) / 100;
+			let k = toolSize >= 50 ? 10 : 1;
+			toolSize += (-k * ev.deltaY) / 100;
 		};
 	};
+
 	const paperIt: Action<HTMLCanvasElement> = (node) => {
 		console.log("paperIt", node);
 		const sc = new paper.PaperScope();
@@ -127,14 +101,14 @@
 		path.moveTo(start);
 		path.lineTo(start.add([-50, 50]));
 
-		lineTool = new paper.Tool();
+		const lineTool = new paper.Tool();
 		lineTool.onMouseDown = (event: paper.MouseEvent) => {
 			path = new paper.Path.Line({
 				from: event.point,
 				to: event.point,
 				strokeCap: "round",
-				strokeColor: colorPicker,
-				strokeWidth: sizePicker,
+				strokeColor: toolColor,
+				strokeWidth: toolSize,
 			});
 		};
 		lineTool.onMouseDrag = (event: paper.MouseEvent) => {
@@ -142,14 +116,14 @@
 		};
 		lineTool.onMouseUp = (event: paper.MouseEvent) => {};
 
-		freeTool = new paper.Tool();
+		const freeTool = new paper.Tool();
 		freeTool.onMouseDown = (event: paper.MouseEvent) => {
 			path = new paper.Path({
 				segments: [event.point],
-				strokeColor: colorPicker,
+				strokeColor: toolColor,
 				strokeCap: "round",
 				strokeJoin: "round",
-				strokeWidth: sizePicker,
+				strokeWidth: toolSize,
 			});
 			path.add([event.point.x + 0.1, event.point.y + 0.1]);
 		};
@@ -161,7 +135,7 @@
 		};
 		freeTool.onMouseMove = (event: paper.MouseEvent) => {};
 
-		freeTool.activate();
+		// freeTool.activate();
 
 		const canvasSizeUpdate = () => {
 			const parent = node.parentElement as HTMLDivElement;
@@ -176,42 +150,55 @@
 			sc.view.viewSize = new paper.Size(canvasSize.w * k, canvasSize.h * k);
 			sc.view.center = new paper.Point(canvasSize.w / 2, canvasSize.h / 2);
 		};
+		canvasSizeUpdate();
 
 		on(window, "resize", canvasSizeUpdate);
 
 		$effect(() => {
-			let f = fullscreen;
+			let f = fullscreened;
 			canvasSizeUpdate();
-			toolBar!.style.transform = `translate(${0}px, ${0}px)`;
+			toolBarEl!.style.transform = `translate(${0}px, ${0}px)`;
 			translate = { x: 0, y: 0 };
+		});
+
+		$effect(() => {
+			console.log("tool: ", tool);
+			switch (tool) {
+				case "free":
+					if (!freeTool) return;
+					freeTool.activate();
+					break;
+				case "line":
+					if (!lineTool) return;
+					lineTool.activate();
+					break;
+			}
 		});
 	};
 </script>
 
 <div
-	class="flex flex-col items-center justify-center gap-2 object-contain {fullscreen
+	class="flex flex-col items-center justify-center gap-2 object-contain {fullscreened
 		? 'fixed top-0 left-0 w-screen h-screen z-10 bg-black/80'
 		: 'relative'}"
 >
 	<canvas
-		bind:this={canvas}
+		bind:this={canvasEl}
 		use:paperIt
 		use:changeToolSizeOnWheel
-		width={canvasSize.w}
-		height={canvasSize.h}
-		class="bg-primary-100-900 rounded-lg ring-1 {fullscreen ? '' : 'w-full'}"
+		class="bg-primary-100-900 rounded-lg ring-1 {fullscreened ? '' : 'w-full'}"
 	></canvas>
 	<div
-		bind:this={toolBar}
+		bind:this={toolBarEl}
 		class="absolute top-0 left-full bg-primary-300/60 dark:bg-primary-700/60 m-1 p-1 pt-2 rounded-container flex flex-col items-center gap-2 backdrop-blur-sm text-white touch-none"
 	>
 		<button
 			onclick={() => {
-				fullscreen = !fullscreen;
+				fullscreened = !fullscreened;
 			}}
 			class="btn-icon preset-filled-primary-500"
 		>
-			{#if fullscreen}
+			{#if fullscreened}
 				<Minimize2 />
 			{:else}
 				<Maximize2 />
@@ -233,14 +220,15 @@
 			>
 		</Segment>
 		<input
-			bind:value={colorPicker}
+			bind:value={toolColor}
 			type="color"
 			class="input"
 		/>
 		<input
-			bind:value={sizePicker}
+			bind:value={toolSize}
 			use:changeToolSizeOnWheel
-			min="1"
+			min={toolSizeMin}
+			max={toolSizeMax}
 			type="number"
 			class="input w-12 pl-1 select-none"
 		/>
@@ -252,3 +240,6 @@
 		</div>
 	</div>
 </div>
+
+<style>
+</style>
