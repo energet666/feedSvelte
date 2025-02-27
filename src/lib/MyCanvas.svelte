@@ -142,9 +142,11 @@
 			let w = parent.getBoundingClientRect().width;
 			let h = parent.getBoundingClientRect().height;
 			let k = w / canvasSize.w;
-			const temp_h = canvasSize.h * k;
-			if (temp_h > h) {
-				k = h / canvasSize.h;
+			if (fullscreened) {
+				const temp_h = canvasSize.h * k;
+				if (temp_h > h) {
+					k = h / canvasSize.h;
+				}
 			}
 			sc.view.scaling = new paper.Point(k, k);
 			sc.view.viewSize = new paper.Size(canvasSize.w * k, canvasSize.h * k);
@@ -178,12 +180,14 @@
 </script>
 
 <div
-	class="flex flex-col items-center justify-center gap-2 object-contain {fullscreened
+	class="flex flex-col items-center justify-center gap-2 {fullscreened
 		? 'fixed top-0 left-0 w-screen h-screen z-10 bg-black/80'
 		: 'relative'}"
 >
 	<canvas
 		bind:this={canvasEl}
+		width={canvasSize.w}
+		height={canvasSize.h}
 		use:paperIt
 		use:changeToolSizeOnWheel
 		class="bg-primary-100-900 rounded-lg ring-1 {fullscreened ? '' : 'w-full'}"
