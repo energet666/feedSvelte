@@ -258,7 +258,9 @@
 		height={canvasSize.h}
 		use:paperIt
 		use:changeToolSizeOnWheel
-		class="bg-primary-100-900 rounded-lg ring-1 {fullscreened ? '' : 'w-full'}"
+		class="bg-primary-100-900 rounded-lg ring ring-surface-100-900 {fullscreened
+			? ''
+			: 'w-full'}"
 	></canvas>
 	<div
 		bind:this={toolBarEl}
@@ -280,7 +282,10 @@
 				{/if}
 			</button>
 			<Segment
-				bind:value={tool}
+				value={tool}
+				onValueChange={(e) => {
+					tool = e.value!;
+				}}
 				indicatorBg="bg-primary-500"
 				indicatorText="text-white"
 				orientation="vertical"

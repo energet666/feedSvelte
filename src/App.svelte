@@ -2,7 +2,6 @@
 	import { Switch } from "@skeletonlabs/skeleton-svelte";
 	import Post from "./lib/Post.svelte";
 	import { MoonIcon, SunIcon } from "lucide-svelte";
-	import * as themes from "@skeletonlabs/skeleton/themes";
 	import MyCanvas from "./lib/MyCanvas.svelte";
 
 	type PostData = {
@@ -11,7 +10,7 @@
 	};
 	let id = 0;
 	let posts: PostData[] = $state([]);
-	const temesNames = Object.keys(themes);
+	const temesNames = ["catppuccin", "concord", "vox", "rose"];
 
 	for (; id < 20; id++) {
 		posts.push({ id: id, title: "Post " + id });
@@ -75,5 +74,5 @@
 
 <!-- </div> -->
 
-<style style="postcss">
+<style>
 </style>

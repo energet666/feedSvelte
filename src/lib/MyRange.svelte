@@ -45,13 +45,14 @@
 </div>
 
 <style lang="postcss">
+	@reference "../app.css";
 	p {
 		/* @apply drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]; */
 		/* text-shadow: 1px 1px 1px rgba(0, 0, 0, 1); */
 	}
 	input[type="range"]::-webkit-slider-thumb {
 		@apply appearance-none w-8 h-8 translate-y-1 bg-primary-500 cursor-pointer;
-		border-radius: calc(var(--radii-container) - 0.25rem);
+		border-radius: calc(var(--radius-container) - 0.25rem);
 	}
 	/* input[type="range"]:focus::-webkit-slider-thumb {
 		@apply bg-primary-500;

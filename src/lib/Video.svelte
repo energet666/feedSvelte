@@ -46,8 +46,7 @@
 		{src}
 		tabindex="0"
 		playsinline
-		class="min-h-0"
-		style="border-radius: calc(var(--radii-container) - 0.25rem);"
+		class="min-h-0 [border-radius:calc(var(--radius-container)-0.25rem)]"
 		onclick={(e) => {
 			paused = !paused;
 			const el = e.target as HTMLVideoElement;

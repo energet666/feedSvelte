@@ -1,6 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@import "@skeletonlabs/skeleton";
+@import "@skeletonlabs/skeleton/optional/presets";
+
+@import "@skeletonlabs/skeleton/themes/catppuccin";
+@import "@skeletonlabs/skeleton/themes/rose";
+@import "@skeletonlabs/skeleton/themes/concord";
+@import "@skeletonlabs/skeleton/themes/vox";
+
+@source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 body {
 	/* @apply h-screen w-full flex flex-col justify-center items-stretch */
@@ -24,7 +34,7 @@ html {
 	background-color: transparent;
 }
 .customScroll::-webkit-scrollbar-thumb {
-	@apply bg-post_edges;
+	@apply bg-surface-500;
 	border-radius: 3px;
 }
 .customScroll::-webkit-scrollbar-button {

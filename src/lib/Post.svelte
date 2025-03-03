@@ -40,7 +40,7 @@
 </script>
 
 <div
-	class="flex flex-col max-h-[calc(100vh-10px)] bg-primary-600/10 rounded-container overflow-hidden shadow-lg ring-1 p-1"
+	class="flex flex-col max-h-[calc(100vh-10px)] bg-primary-600/10 rounded-container overflow-hidden shadow-lg ring ring-surface-100-900 p-1"
 >
 	{#if isVideo}
 		<Video {src} />

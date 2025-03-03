@@ -36,7 +36,10 @@
 			name="speed"
 			gap="gap-0"
 			padding="p-[5px]"
-			bind:value={playbackRateStr}
+			value={playbackRateStr}
+			onValueChange={(e) => {
+				playbackRateStr = e.value!;
+			}}
 		>
 			{#each speeds as s}
 				<Segment.Item value={s.toString()}>x{s}</Segment.Item>
