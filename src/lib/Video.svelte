@@ -69,7 +69,7 @@
 	<div
 		class="absolute -bottom-16 left-0 right-0 p-2 flex gap-2 items-center {fullScreen
 			? 'group-hover:bottom-10 px-5'
-			: 'group-hover:bottom-0'} group-hover:bottom-0 transition-all duration-300 outline-none"
+			: 'group-hover:bottom-0'} transition-all duration-300 outline-none"
 		tabindex="0"
 	>
 		<MyRange
