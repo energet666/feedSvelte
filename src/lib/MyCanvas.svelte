@@ -6,6 +6,8 @@
 		LucidePencilRuler,
 		Pencil,
 		GripHorizontal,
+		TextCursorInput,
+		Image,
 	} from "lucide-svelte";
 	import { Segment } from "@skeletonlabs/skeleton-svelte";
 	import type { Action } from "svelte/action";
@@ -125,7 +127,12 @@
 				strokeJoin: "round",
 				strokeWidth: toolSize,
 			});
-			path.add([event.point.x + 0.1, event.point.y + 0.1]);
+			new paper.Path.Circle({
+				center: event.point,
+				radius: toolSize / 2,
+				fillColor: toolColor,
+			});
+			// path.add([event.point.x + 0.1, event.point.y + 0.1]);
 		};
 		freeTool.onMouseDrag = (event: paper.MouseEvent) => {
 			path.add(event.point);
@@ -135,6 +142,59 @@
 		};
 		freeTool.onMouseMove = (event: paper.MouseEvent) => {};
 
+		const textTool = new paper.Tool();
+		let text = new paper.PointText({});
+		textTool.onMouseDown = (event: paper.MouseEvent) => {
+			let color = new paper.Color(toolColor);
+			text = new paper.PointText({
+				point: event.point,
+				content: "Text",
+				fontSize: toolSize,
+				fillColor: color,
+				opacity: 0.5,
+			});
+		};
+		textTool.onMouseDrag = (event: paper.MouseEvent) => {
+			text.point = event.point;
+		};
+		textTool.onMouseUp = (event: paper.MouseEvent) => {
+			let needClear = true;
+			const unkeypress = on(document, "keypress", (event: KeyboardEvent) => {
+				event.preventDefault();
+				if (event.key === "Enter") {
+					text.opacity = 1;
+					unkeypress();
+				} else if (event.key === "Backspace") {
+					text.content = text.content.slice(0, -1);
+				} else {
+					if (needClear) {
+						text.content = "";
+						needClear = false;
+					}
+					text.content = text.content + event.key;
+				}
+			});
+			const undown = on(document, "pointerdown", () => {
+				text.opacity = 1;
+				unkeypress();
+				undown();
+			});
+		};
+
+		const imageTool = new paper.Tool();
+		let raster = new paper.Raster();
+		imageTool.onMouseDown = (event: paper.MouseEvent) => {
+			raster = new paper.Raster("favicon");
+			raster.scale(1);
+			raster.rotate(0);
+			let k = raster.width / raster.height;
+			raster.size = new paper.Size(toolSize * k, toolSize);
+			raster.position = event.point;
+			console.log(raster.exportJSON());
+		};
+		imageTool.onMouseDrag = (event: paper.MouseEvent) => {
+			raster.position = event.point;
+		};
 		// freeTool.activate();
 
 		const canvasSizeUpdate = () => {
@@ -167,12 +227,16 @@
 			console.log("tool: ", tool);
 			switch (tool) {
 				case "free":
-					if (!freeTool) return;
 					freeTool.activate();
 					break;
 				case "line":
-					if (!lineTool) return;
 					lineTool.activate();
+					break;
+				case "text":
+					textTool.activate();
+					break;
+				case "image":
+					imageTool.activate();
 					break;
 			}
 		});
@@ -185,6 +249,10 @@
 		: 'relative'}"
 >
 	<canvas
+		tabindex="0"
+		onclick={(ev) => {
+			ev.currentTarget.focus(); //чтобы отключался фокус у инпутов
+		}}
 		bind:this={canvasEl}
 		width={canvasSize.w}
 		height={canvasSize.h}
@@ -194,48 +262,63 @@
 	></canvas>
 	<div
 		bind:this={toolBarEl}
-		class="absolute top-0 left-full bg-primary-300/60 dark:bg-primary-700/60 m-1 p-1 pt-2 rounded-container flex flex-col items-center gap-2 backdrop-blur-sm text-white touch-none"
+		class="absolute top-0 left-full bg-primary-300/60 dark:bg-primary-700/60 m-1 p-1 pt-2 rounded-container flex flex-col items-center gap-2 backdrop-blur-sm text-white touch-none max-h-[calc(100%-8px)]"
 	>
-		<button
-			onclick={() => {
-				fullscreened = !fullscreened;
-			}}
-			class="btn-icon preset-filled-primary-500"
-		>
-			{#if fullscreened}
-				<Minimize2 />
-			{:else}
-				<Maximize2 />
-			{/if}
-		</button>
-		<Segment
-			bind:value={tool}
-			indicatorBg="bg-primary-500"
-			indicatorText="text-white"
-			orientation="vertical"
-		>
-			<Segment.Item
-				value="free"
-				classes="btn-icon"><Pencil /></Segment.Item
+		<div class="flex flex-col items-center gap-2 overflow-y-scroll *:shrink-0">
+			<button
+				onclick={() => {
+					fullscreened = !fullscreened;
+				}}
+				class="btn-icon preset-filled-primary-500"
 			>
-			<Segment.Item
-				value="line"
-				classes="btn-icon"><LucidePencilRuler /></Segment.Item
+				{#if fullscreened}
+					<Minimize2 />
+				{:else}
+					<Maximize2 />
+				{/if}
+			</button>
+			<Segment
+				bind:value={tool}
+				indicatorBg="bg-primary-500"
+				indicatorText="text-white"
+				orientation="vertical"
 			>
-		</Segment>
-		<input
-			bind:value={toolColor}
-			type="color"
-			class="input"
-		/>
-		<input
-			bind:value={toolSize}
-			use:changeToolSizeOnWheel
-			min={toolSizeMin}
-			max={toolSizeMax}
-			type="number"
-			class="input w-12 pl-1 select-none"
-		/>
+				<Segment.Item
+					value="free"
+					classes="btn-icon"><Pencil /></Segment.Item
+				>
+				<Segment.Item
+					value="line"
+					classes="btn-icon"><LucidePencilRuler /></Segment.Item
+				>
+				<Segment.Item
+					value="text"
+					classes="btn-icon"><TextCursorInput /></Segment.Item
+				>
+				<Segment.Item
+					value="image"
+					classes="btn-icon"><Image /></Segment.Item
+				>
+			</Segment>
+			<input
+				bind:value={toolColor}
+				type="color"
+				class="input"
+			/>
+			<input
+				bind:value={toolSize}
+				use:changeToolSizeOnWheel
+				min={toolSizeMin}
+				max={toolSizeMax}
+				type="number"
+				class="input w-12 pl-1 select-none"
+			/>
+			<img
+				id="favicon"
+				src="/vite.svg"
+				alt=""
+			/>
+		</div>
 		<div
 			use:dragParent
 			class="self-stretch"
