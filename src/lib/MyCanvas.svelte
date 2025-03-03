@@ -264,7 +264,9 @@
 		bind:this={toolBarEl}
 		class="absolute top-0 left-full bg-primary-300/60 dark:bg-primary-700/60 m-1 p-1 pt-2 rounded-container flex flex-col items-center gap-2 backdrop-blur-sm text-white touch-none max-h-[calc(100%-8px)]"
 	>
-		<div class="flex flex-col items-center gap-2 overflow-y-scroll *:shrink-0">
+		<div
+			class="flex flex-col items-center gap-2 overflow-y-auto *:shrink-0 customScroll"
+		>
 			<button
 				onclick={() => {
 					fullscreened = !fullscreened;

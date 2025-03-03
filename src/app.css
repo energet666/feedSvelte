@@ -15,3 +15,21 @@ html {
 	touch-action: manipulation;
 	scrollbar-width: none;
 }
+
+.customScroll::-webkit-scrollbar {
+	background-color: transparent;
+	width: 6px;
+}
+.customScroll::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+.customScroll::-webkit-scrollbar-thumb {
+	@apply bg-post_edges;
+	border-radius: 3px;
+}
+.customScroll::-webkit-scrollbar-button {
+	display: none;
+}
+.customScroll {
+	-webkit-overflow-scrolling: touch;
+}
